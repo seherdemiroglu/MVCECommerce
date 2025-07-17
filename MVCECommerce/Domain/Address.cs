@@ -22,7 +22,7 @@ namespace MVCECommerce.Domain
         {
             builder.ToTable("Addresses");
             builder.Property(p => p.Name).IsRequired();
-            builder.Property(p=>p.Text).IsRequired();
+            builder.Property(p => p.Text).IsRequired();
 
         }
     }

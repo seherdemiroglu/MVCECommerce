@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCECommerce.Domain
 {
-    public class Category:_EntityBase
+    public class Category : _EntityBase
     {
         public string? NameTr { get; set; }
         public string? NameEn { get; set; }
@@ -18,11 +18,11 @@ namespace MVCECommerce.Domain
         {
             builder.ToTable("Categories");
             builder.Property(p => p.NameTr).IsRequired();
-            builder.Property(p=>p.NameEn).IsRequired();
+            builder.Property(p => p.NameEn).IsRequired();
             builder
                 .HasMany(p => p.Products)
-                .WithOne(p=>p.Category)
-                .HasForeignKey(p=>p.CategoryId)
+                .WithOne(p => p.Category)
+                .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

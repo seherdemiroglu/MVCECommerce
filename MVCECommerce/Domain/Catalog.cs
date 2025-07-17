@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MVCECommerce.Domain
 {
-    public class Catalog:_EntityBase
+    public class Catalog : _EntityBase
     {
         public string? NameTr { get; set; }
         public string? NameEn { get; set; }
 
-        public ICollection<Product> Products { get; set; }= new List<Product>();//mant to many bağlantı (catalog listesi de product da var)
+        public ICollection<Product> Products { get; set; } = new List<Product>();//mant to many bağlantı (catalog listesi de product da var)
 
     }
 

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MVCECommerce.Domain
 {
-    public class ProductImage:_EntityBase
+    public class ProductImage : _EntityBase
     {
 
         public Guid ProductId { get; set; }
@@ -17,7 +17,7 @@ namespace MVCECommerce.Domain
         public void Configure(EntityTypeBuilder<ProductImage> builder)
         {
             builder.ToTable("ProductImages");
-            builder.Property(p=>p.Image).IsRequired();
+            builder.Property(p => p.Image).IsRequired();
 
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace MVCECommerce.Domain
 {
-    public class Specification:_EntityBase
+    public class Specification : _EntityBase
     {
         #region Scalar
         public string? NameTr { get; set; }

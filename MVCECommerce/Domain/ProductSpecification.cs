@@ -17,9 +17,9 @@ namespace MVCECommerce.Domain
         {
             builder.ToTable("ProductSpecifications");
             builder
-                .HasKey(p => new {p.ProductId,p.SpecificationId});
+                .HasKey(p => new { p.ProductId, p.SpecificationId });
             builder.Property(p => p.Value).IsRequired();
-        
+
 
         }
     }

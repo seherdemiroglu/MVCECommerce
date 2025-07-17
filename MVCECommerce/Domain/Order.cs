@@ -6,7 +6,7 @@ namespace MVCECommerce.Domain
     public class Order
     {
         public Guid Id { get; set; }
-        public DateTime Date {  get; set; }
+        public DateTime Date { get; set; }
         public Guid UserId { get; set; }
         public Guid ShippingAddressId { get; set; }
 
@@ -21,8 +21,8 @@ namespace MVCECommerce.Domain
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.ToTable("Orders");
-            builder.HasMany(p=>p.Items).WithOne(p=>p.Order)
-                .HasForeignKey(p=>p.OrderId)
+            builder.HasMany(p => p.Items).WithOne(p => p.Order)
+                .HasForeignKey(p => p.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

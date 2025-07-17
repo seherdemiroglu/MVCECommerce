@@ -7,7 +7,7 @@ namespace MVCECommerce.Domain
     {
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }
-        public DateTime Date {  get; set; }
+        public DateTime Date { get; set; }
         public Guid UserId { get; set; }
         public int Score { get; set; }
         public string? Text { get; set; }

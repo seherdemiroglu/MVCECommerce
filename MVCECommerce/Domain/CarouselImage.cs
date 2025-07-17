@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MVCECommerce.Domain
 {
-    public class CarouselImage:_EntityBase
+    public class CarouselImage : _EntityBase
     {
         public byte[] Image { get; set; }
         public string? Url { get; set; }
@@ -17,7 +17,7 @@ namespace MVCECommerce.Domain
         {
             builder.ToTable("CarouselImages");
             builder.Property(p => p.Image).IsRequired();
-            
+
 
         }
     }

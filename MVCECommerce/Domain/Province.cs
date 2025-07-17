@@ -9,7 +9,7 @@ namespace MVCECommerce.Domain
         public string? Name { get; set; }
 
 
-        public ICollection<City> Cities { get; set; }=new List<City>();
+        public ICollection<City> Cities { get; set; } = new List<City>();
     }
 
     class ProvinceConfiguration : IEntityTypeConfiguration<Province>
@@ -18,10 +18,10 @@ namespace MVCECommerce.Domain
         {
             builder.ToTable("Provinces");
             builder.HasIndex(p => new { p.Name }).IsUnique();
-            builder.Property(p=>p.Name).IsRequired();
-            builder.HasMany(p=>p.Cities)
-                .WithOne(p=>p.Province)
-                .HasForeignKey(p=>p.ProvinceId)
+            builder.Property(p => p.Name).IsRequired();
+            builder.HasMany(p => p.Cities)
+                .WithOne(p => p.Province)
+                .HasForeignKey(p => p.ProvinceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasData(
