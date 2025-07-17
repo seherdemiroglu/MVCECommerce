@@ -36,11 +36,42 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "Areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+
+app.MapControllerRoute(//defaýlt rota hep en sonda olsun. herþeye uyduðu için her zaman çalýþýr ve diðer alanlara inilmez
     name: "Default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
+
 using var scope = app.Services.CreateScope();
 using var dbContext = scope.ServiceProvider.GetRequiredService<MVCECommerceDbContext>();
+using var roleManager=scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
 dbContext.Database.Migrate();
 
+new[]
+{
+    new Role {DisplayName="Yöneticiler", Name="Administrators"},
+    new Role {DisplayName="Ürün Yöneticileri", Name="ProductAdministrators"},
+    new Role {DisplayName="Sipariþ Yöneticileri", Name="OrderAdministrators"},
+    new Role {DisplayName="Üyeler", Name="Members"}
+}.ToList()
+.ForEach(p =>
+{
+    roleManager.CreateAsync(p).Wait();
+});
+
+var user = new User
+{
+    Date= DateTime.UtcNow,
+    Gender=Genders.Male,
+    GivenName="Builtin Admin",
+    UserName="admin@mvc.com",
+    Email="admin@mvc.com"
+};
+userManager.CreateAsync(user, "1").Wait();
+//3.19
 app.Run();
