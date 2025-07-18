@@ -1,0 +1,47 @@
+﻿@model LoginViewModel
+@{
+    Layout = "_AccountLayout";
+    ViewData["Title"] = "Üye Girişi";
+
+}
+<div class="row">
+    <div class="d-none d-md-block col-md-6">
+        <img src="~/images/register.webp" alt="Kaydol" class="img-fluid" />
+    </div>
+    <div class="col-12 col-md-6">
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @*asp-controller="Account" asp-action="Login" yazmak zorunlu değil burda, çünkü gideceği yeri biliyor isimlendirmeden dolayı*@
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-danger" asp-validation-summary="ModelOnly"></div>
+                    <div class="mb-3">
+                        <div class="col-12">
+                            <label asp-for="UserName" class="form-label"></label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3 col-12 text-center">
+                        Hesabın yok mu? <a asp-action="Register">Kaydol</a>
+                    </div>
+                    <div class="mb-3 col-12 text-center">
+                        <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                    </div>
+                    <div class="mb-3 col-12 text-center">
+                        <a asp-action="ResetPassword">Parolamı yenile</a>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

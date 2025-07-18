@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVCECommerce;
 using MVCECommerce.Domain;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 using System.Data.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +30,22 @@ builder.Services.AddIdentity<User,Role>(config =>
     config.SignIn.RequireConfirmedEmail = true;
 }).AddEntityFrameworkStores<MVCECommerceDbContext>()
 .AddDefaultTokenProviders();//mail doðrulama veya þifre yenileme iþleminde kullanýcýya gönderilen token üretir
+
+builder
+    .Services
+    .AddMailKit(config =>
+    {
+        config.UseMailKit(new MailKitOptions
+        {
+            Server = builder.Configuration["Email:Server"],
+            Port = builder.Configuration.GetValue<int>("Email:Port"),
+            SenderName = builder.Configuration["Email:SenderName"],
+            SenderEmail = builder.Configuration["Email:SenderEmail"],
+            Account = builder.Configuration["Email:Account"],
+            Password = builder.Configuration["Email:Password"],
+            Security = builder.Configuration.GetValue<bool>("Email:Security")
+        });
+    });
 
 var app = builder.Build();
 
@@ -70,8 +88,9 @@ var user = new User
     Gender=Genders.Male,
     GivenName="Builtin Admin",
     UserName="admin@mvc.com",
-    Email="admin@mvc.com"
+    Email="admin@mvc.com",
+    EmailConfirmed=true
 };
-userManager.CreateAsync(user, "1").Wait();
-//3.19
+userManager.CreateAsync(user, "Mvcadmin1?").Wait();
+
 app.Run();

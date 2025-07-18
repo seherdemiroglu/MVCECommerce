@@ -1,0 +1,54 @@
+﻿@model RegisterViewModel
+
+@{
+    Layout = "_AccountLayout";
+    ViewData["Title"] = "Yeni üyelik";
+}
+
+<div class="row">
+    <div class="d-none d-md-block col-md-6">
+        <img src="~/images/register.webp" alt="Kaydol" class="img-fluid"/>
+    </div>
+    <div class="col-12 col-md-6">
+        <form asp-controller="Account" asp-action="Register" method="post">
+            @*asp-controller="Account" asp-action="Register" yazmak zorunlu değil burda, çünkü gideceği yeri biliyor isimlendirmeden dolayı*@
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-danger" asp-validation-summary="ModelOnly"></div>
+                    <div class="mb-3">
+                        <div class="col-12">
+                            <label asp-for="Username" class="form-label"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="GivenName" class="form-label"></label>
+                            <input asp-for="GivenName" class="form-control" />
+                            <span asp-validation-for="GivenName" class="text-danger"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="PasswordCheck" class="form-label"></label>
+                            <input asp-for="PasswordCheck" class="form-control" />
+                            <span asp-validation-for="PasswordCheck" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3 col-12 text-center">
+                        Zaten üye misiniz? <a asp-action="Login">Giriş yap</a>
+                    </div>
+                    <div class="mb-3 col-12 text-center">
+                        <button type="submit" class="btn btn-primary w-100">Kaydol</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section Scripts{ 
+    <partial name="_ValidationScriptsPartial"/>
+}
