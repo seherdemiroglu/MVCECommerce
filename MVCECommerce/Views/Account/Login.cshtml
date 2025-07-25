@@ -26,6 +26,13 @@
                             <input asp-for="Password" class="form-control" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input asp-for="IsPersistent" class="form-check-input" />
+                                <label asp-for="IsPersistent" class="form-check-label"></label>
+                            </div>
+                            
+                        </div>
                     </div>
                     <div class="mb-3 col-12 text-center">
                         Hesabın yok mu? <a asp-action="Register">Kaydol</a>

@@ -1,11 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVCECommerce.Domain
 {
     public class Category : _EntityBase
     {
+        [Display(Name = "Ad (Tr)")]
+        [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
         public string? NameTr { get; set; }
+
+        [Display(Name = "Ad (En)")]
+        [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
         public string? NameEn { get; set; }
         public byte[]? Image { get; set; }
 

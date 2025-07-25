@@ -1,0 +1,71 @@
+﻿@model List<Category>
+@{
+    ViewData["Title"] = "Kategori";
+}
+<div class="p-3 d-flex justify-content-end">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        Yeni
+    </a>
+</div>
+<table class="table table-bordered table-striped">
+    <colgroup>
+        <col />
+        <col />
+        <col width="200" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>
+                <div class="d-flex align-items-center">
+                    <img src="https://flagsapi.com/TR/flat/24.png" class="mr-2">
+                    Ad
+                </div>
+            </th>
+            <th>
+                <div class="d-flex align-items-center">
+                    <img src="https://flagsapi.com/GB/flat/24.png" class="mr-2">
+                    Ad
+                </div>
+            </th>
+            <th>
+                <div class="d-flex align-items-center">
+                    Aktif
+                </div>
+            </th>
+            <th>
+                <div class="d-flex align-items-center">
+                    İşlemler
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.NameTr</td>
+                    <td>@item.NameEn</td>
+                    <td>
+                        @if (item.IsEnabled == true)
+                        {
+                            <i class="fa fa-check text-success" aria-hidden="true"></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-window-close text-danger" aria-hidden="true"></i>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning mr-2"><i class="fas fa-pen" aria-hidden="true"></i></a>
+                            @*program.cs deki ""pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");"" rotadaki id kısmına gönderdiğimiz id eklenecek*@
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger mr-2"><i class="fas fa-trash" aria-hidden="true"></i></a>
+                        </div>
+
+                    </td>
+                </tr>
+            }
+        
+    </tbody>
+</table>

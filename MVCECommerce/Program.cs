@@ -5,6 +5,7 @@ using MVCECommerce.Domain;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using System.Data.Common;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -91,6 +92,12 @@ var user = new User
     Email="admin@mvc.com",
     EmailConfirmed=true
 };
-userManager.CreateAsync(user, "Mvcadmin1?").Wait();
+if(userManager.FindByNameAsync("admin@mvc.com").Result is null)
+{
+    userManager.CreateAsync(user, "Mvcadmin1?").Wait();
+    userManager.AddToRoleAsync(user, "Administrators").Wait();
+    userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, user.GivenName)).Wait();
+}
+
 
 app.Run();

@@ -13,7 +13,7 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 {
     public IActionResult Login()
     {
-        return View();
+        return View(new LoginViewModel {});//checkbox tikli gelsin diye
     }
 
     [HttpPost]
@@ -23,8 +23,8 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         var result = await signInManager.PasswordSignInAsync(
             model.UserName!,
             model.Password!,
-            isPersistent: false,
-            lockoutOnFailure: false);
+            isPersistent: model.IsPersistent,//session tabanlı değil süre tabanlı oldu true yapınca
+            lockoutOnFailure: true);//5 kere yanlış şifre girince banlar
 
         if (result.Succeeded)
         {

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVCECommerce.Domain
 {
@@ -8,7 +10,9 @@ namespace MVCECommerce.Domain
         public Guid Id { get; set; }
         //public Guid UserId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public bool IsEnabled { get; set; }
+
+        [Display(Name="Aktif")]
+        public bool IsEnabled { get; set; }=true;
 
         public User? User { get; set; }
     }
