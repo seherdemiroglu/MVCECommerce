@@ -1,6 +1,6 @@
-﻿@model List<Category>
+﻿@model List<Brand>
 @{
-    ViewData["Title"] = "Kategori";
+    ViewData["Title"] = "Marka";
 }
 <div class="p-3 d-flex justify-content-end">
     <a asp-action="Create" class="btn btn-primary">
@@ -10,24 +10,24 @@
 </div>
 <table class="table table-bordered table-striped">
     <colgroup>
+        <col width="90" />
         <col />
-        <col />
+        <col width="60" />
         <col width="200" />
     </colgroup>
     <thead>
         <tr>
             <th>
                 <div class="d-flex align-items-center">
-                    <img src="https://flagsapi.com/TR/flat/24.png" class="mr-2">
-                    Ad
+                    Logo
                 </div>
             </th>
             <th>
                 <div class="d-flex align-items-center">
-                    <img src="https://flagsapi.com/GB/flat/24.png" class="mr-2">
                     Ad
                 </div>
             </th>
+
             <th>
                 <div class="d-flex align-items-center">
                     Aktif
@@ -44,8 +44,8 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.NameTr</td>
-                <td>@item.NameEn</td>
+                <td><img src="@Url.Action("Brand","Images",new { area=string.Empty, id=item.Id })" height="90" width="90" onerror="this.error = null; this.src='/images/noimage.png'" style="object-fit:contain"/></td>
+                <td>@item.Name</td>
                 <td>
                     @if (item.IsEnabled == true)
                     {

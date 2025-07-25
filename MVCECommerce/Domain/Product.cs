@@ -1,19 +1,46 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVCECommerce.Domain
 {
     public class Product : _EntityBase
     {
+        [Display(Name = "Kategori")]
+        [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
         public Guid CategoryId { get; set; }
-        public Guid? BrandId { get; set; }// zero or one to many bağlantı
+
+        [Display(Name = "Marka")]
+        public Guid? BrandId { get; set; }
+
+        [Display(Name = "Ad (Tr)")]
+        [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
         public string? NameTr { get; set; }
+
+        [Display(Name = "Ad (En)")]
+        [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
         public string? NameEn { get; set; }
+
+        [Display(Name = "Özellikler (Tr)")]
         public string? DescriptionTr { get; set; }
+
+        [Display(Name = "Özellikler (En)")]
         public string? DescriptionEn { get; set; }
+
+        [Display(Name = "Fiyat")]
+        [Required(ErrorMessage = "{0} alanı boş bırakılamaz")]
         public decimal Price { get; set; }
         public byte[]? Image { get; set; }
         public int Views { get; set; }
+
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Katalog")]
+        public Guid[]? SelectedCatalogs { get; set; }
 
         public Brand? Brand { get; set; }
         public Category? Category { get; set; }

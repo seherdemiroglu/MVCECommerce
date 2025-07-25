@@ -1,0 +1,31 @@
+﻿@model MVCECommerce.Domain.Catalog
+@{
+    ViewData["Title"] = "Katalog Düzenle";
+}
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label" asp-for="NameTr"></label>
+        <input class="form-control" asp-for="NameTr" placeholder="katalog adını yazınız..." />
+        <span class="text-danger" asp-validation-for="NameTr"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="NameEn"></label>
+        <input class="form-control" asp-for="NameEn" placeholder="katalog adını yazınız..." />
+        <span class="text-danger" asp-validation-for="NameEn"></span>
+    </div>
+    <div class="mb-3">
+        <div class="form-check">
+            <input class="form-check-input" asp-for="IsEnabled" />
+            <label class="form-check-label" asp-for="IsEnabled"></label>
+        </div>
+    </div>
+    <div class="d-flex">
+        <a class="btn btn-link" asp-action="Index">İptal</a>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" /> //
+}
