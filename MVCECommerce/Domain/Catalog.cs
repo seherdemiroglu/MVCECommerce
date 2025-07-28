@@ -17,6 +17,8 @@ namespace MVCECommerce.Domain
         public void Configure(EntityTypeBuilder<Catalog> builder)
         {
             builder.ToTable("Catalogs");
+            builder.HasIndex(p => new { p.NameTr });
+            builder.HasIndex(p => new{p.NameEn});
             builder.Property(p => p.NameTr).IsRequired();
             builder.Property(p => p.NameEn).IsRequired();
         }

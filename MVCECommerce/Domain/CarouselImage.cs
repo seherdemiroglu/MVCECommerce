@@ -7,7 +7,7 @@ namespace MVCECommerce.Domain
     {
         public byte[] Image { get; set; }
         public string? Url { get; set; }
-        public Guid? CategoryId { get; set; } //zero or one to many bağlantı, katalogu olmayabilir yada bir kataloğa bağlı olabilir
+        public Guid? CatalogId { get; set; } //zero or one to many bağlantı, katalogu olmayabilir yada bir kataloğa bağlı olabilir
 
     }
 

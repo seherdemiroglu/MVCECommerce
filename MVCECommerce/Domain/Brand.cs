@@ -26,7 +26,10 @@ namespace MVCECommerce.Domain
         public void Configure(EntityTypeBuilder<Brand> builder)
         {
             builder.ToTable("Brands");
+            builder.HasIndex(p=> new { p.Name }); //builder.HasIndex(p => p.Name); de olur ama iki parametreli olsaydı bu kullanılamazdı.
+
             builder.Property(p => p.Name).IsRequired();
+
             builder.HasMany(p => p.Products)
                 .WithOne(p => p.Brand)
                 .HasForeignKey(p => p.BrandId)

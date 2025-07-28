@@ -1,4 +1,7 @@
-﻿namespace MVCECommerce.Domain
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+
+namespace MVCECommerce.Domain
 {
     public class Specification : _EntityBase
     {
@@ -13,4 +16,29 @@
 
         #endregion
     }
+
+    public class SpecificationConfiguration : IEntityTypeConfiguration<Specification>
+    {
+        public void Configure(EntityTypeBuilder<Specification> builder)
+        {
+            builder
+                .ToTable("Specifications");
+
+            builder
+                .HasIndex(p => new { p.NameTr });
+
+            builder
+                .HasIndex(p => new { p.NameEn });
+
+            builder
+                .Property(p => p.NameTr)
+                .IsRequired();
+
+            builder
+                .Property(p => p.NameEn)
+                .IsRequired();
+
+        }
+    }
+
 }

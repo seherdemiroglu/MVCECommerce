@@ -14,9 +14,18 @@ namespace MVCECommerce.Areas.Admin.Controllers
 
             return File(item.Logo,"image/webp");
         }
+
+        [OutputCache(Duration = 86400)]
         public async Task<IActionResult> Product(Guid id)
         {
             var item = await dbContext.Products.FindAsync(id);
+            return File(item.Image, "image/webp");
+        }
+
+        [OutputCache(Duration = 86400)]
+        public async Task<IActionResult> CarouselImage(Guid id)
+        {
+            var item = await dbContext.CarouselImages.FindAsync(id);
             return File(item.Image, "image/webp");
         }
     }

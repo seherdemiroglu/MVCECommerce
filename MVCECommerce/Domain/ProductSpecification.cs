@@ -9,6 +9,9 @@ namespace MVCECommerce.Domain
         public Guid SpecificationId { get; set; }
         public string? Value { get; set; }
 
+        public Product? Product { get; set; }
+        public Specification? Specification { get; set; }
+
     }
 
     public class ProductSpecificationsConfiguration : IEntityTypeConfiguration<ProductSpecification>

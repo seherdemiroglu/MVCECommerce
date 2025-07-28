@@ -21,6 +21,7 @@ namespace MVCECommerce.Domain
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
             builder.ToTable("Comments");
+            builder.HasIndex(p => p.Date).IsDescending();
             builder.Property(p => p.Text).IsRequired();
 
         }

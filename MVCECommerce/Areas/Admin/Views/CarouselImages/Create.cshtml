@@ -1,0 +1,39 @@
+﻿
+@model CarouselImageDto
+@inject MVCECommerce.MVCECommerceDbContext dbContext
+@{
+    ViewData["Title"] = "Slider Ekleme";
+    var catalogs = new SelectList(dbContext.Catalogs.ToList(), "Id", "NameTr");
+}
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" asp-for="ImageFile">
+            <label class="custom-file-label" asp-for="ImageFile">Dosya Seçiniz</label>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Url"></label>
+        <input class="form-control" asp-for="Url" placeholder="url yazınız..." />
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="CatalogId"></label>
+        <select class="custom-select" asp-for="CatalogId" asp-items="catalogs">
+            <option selected value="">Seçiniz...</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <div class="form-check">
+            <input class="form-check-input" asp-for="IsEnabled" />
+            <label class="form-check-label" asp-for="IsEnabled"></label>
+        </div>
+    </div>
+    <div class="d-flex">
+        <a class="btn btn-link" asp-action="Index">İptal</a>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

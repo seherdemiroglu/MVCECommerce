@@ -39,6 +39,9 @@ namespace MVCECommerce.Domain
         public IFormFile? ImageFile { get; set; }
 
         [NotMapped]
+        public IFormFile[]? ImageFiles { get; set; }
+
+        [NotMapped]
         [Display(Name = "Katalog")]
         public Guid[]? SelectedCatalogs { get; set; }
 
@@ -50,6 +53,7 @@ namespace MVCECommerce.Domain
         public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
         public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
 
+        public ICollection<ProductSpecification> Specs { get; set; } = new List<ProductSpecification>();
 
 
     }
@@ -59,6 +63,11 @@ namespace MVCECommerce.Domain
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("Products");
+            builder
+            .HasIndex(p => new { p.NameTr });
+
+            builder
+                .HasIndex(p => new { p.NameEn });
             builder.Property(p => p.NameTr).IsRequired();
             builder.Property(p => p.NameEn).IsRequired();
 
@@ -80,6 +89,11 @@ namespace MVCECommerce.Domain
               .HasForeignKey(p => p.ProductId)
               .OnDelete(DeleteBehavior.Restrict);
 
+            builder
+            .HasMany(p => p.Specs)
+            .WithOne(p => p.Product)
+            .HasForeignKey(p => p.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

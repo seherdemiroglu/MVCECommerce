@@ -3,6 +3,7 @@ using System;
 using MVCECommerce;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MVCECommerce.Migrations
 {
     [DbContext(typeof(MVCECommerceDbContext))]
-    partial class MVCECommerceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250727130800_CatalogidtoCarousel")]
+    partial class CatalogidtoCarousel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5958,9 +5961,6 @@ namespace MVCECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Date")
-                        .IsDescending();
-
                     b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
@@ -6031,8 +6031,6 @@ namespace MVCECommerce.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("ProductId", "SpecificationId");
-
-                    b.HasIndex("SpecificationId");
 
                     b.ToTable("ProductSpecifications", (string)null);
                 });
@@ -6730,8 +6728,6 @@ namespace MVCECommerce.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasIndex("Name");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Brands", (string)null);
@@ -6774,10 +6770,6 @@ namespace MVCECommerce.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasIndex("NameEn");
-
-                    b.HasIndex("NameTr");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Catalogs", (string)null);
@@ -6800,10 +6792,6 @@ namespace MVCECommerce.Migrations
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
-
-                    b.HasIndex("NameEn");
-
-                    b.HasIndex("NameTr");
 
                     b.HasIndex("UserId");
 
@@ -6851,10 +6839,6 @@ namespace MVCECommerce.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("NameEn");
-
-                    b.HasIndex("NameTr");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Products", (string)null);
@@ -6889,11 +6873,9 @@ namespace MVCECommerce.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("NameEn")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("NameTr")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid?>("UserId")
@@ -6901,13 +6883,9 @@ namespace MVCECommerce.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("NameEn");
-
-                    b.HasIndex("NameTr");
-
                     b.HasIndex("UserId");
 
-                    b.ToTable("Specifications", (string)null);
+                    b.ToTable("Specifications");
                 });
 
             modelBuilder.Entity("CatalogProduct", b =>
@@ -7002,25 +6980,6 @@ namespace MVCECommerce.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("MVCECommerce.Domain.ProductSpecification", b =>
-                {
-                    b.HasOne("MVCECommerce.Domain.Product", "Product")
-                        .WithMany("Specs")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MVCECommerce.Domain.Specification", "Specification")
-                        .WithMany()
-                        .HasForeignKey("SpecificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Specification");
                 });
 
             modelBuilder.Entity("MVCECommerce.Domain.ShoppingCartItem", b =>
@@ -7213,9 +7172,9 @@ namespace MVCECommerce.Migrations
             modelBuilder.Entity("MVCECommerce.Domain.Specification", b =>
                 {
                     b.HasOne("MVCECommerce.Domain.Category", "Category")
-                        .WithMany("Specifications")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MVCECommerce.Domain._EntityBase", null)
@@ -7288,8 +7247,6 @@ namespace MVCECommerce.Migrations
             modelBuilder.Entity("MVCECommerce.Domain.Category", b =>
                 {
                     b.Navigation("Products");
-
-                    b.Navigation("Specifications");
                 });
 
             modelBuilder.Entity("MVCECommerce.Domain.Product", b =>
@@ -7301,8 +7258,6 @@ namespace MVCECommerce.Migrations
                     b.Navigation("ProductImages");
 
                     b.Navigation("ShoppingCartItems");
-
-                    b.Navigation("Specs");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVCECommerce;
 using MVCECommerce.Domain;
+using MVCECommerce.Services;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using System.Data.Common;
@@ -48,6 +49,8 @@ builder
         });
     });
 
+builder.Services.AddScoped<IImageService, ImageService>();
+
 var app = builder.Build();
 
 app.UseStaticFiles();//wwwroot dosyasýný kullanabilmek için
@@ -68,6 +71,7 @@ using var scope = app.Services.CreateScope();
 using var dbContext = scope.ServiceProvider.GetRequiredService<MVCECommerceDbContext>();
 using var roleManager=scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
 using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
 
 dbContext.Database.Migrate();
 
