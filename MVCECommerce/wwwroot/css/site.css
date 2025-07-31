@@ -7030,7 +7030,7 @@ textarea.form-control-lg {
   position: relative !important;
 }
 
-.position-absolute {
+.position-absolute, .app-dropdown {
   position: absolute !important;
 }
 
@@ -7102,7 +7102,7 @@ textarea.form-control-lg {
   transform: translateY(-50%) !important;
 }
 
-.border {
+.border, .app-dropdown {
   border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
 }
 
@@ -8453,7 +8453,7 @@ textarea.form-control-lg {
   background-color: rgba(var(--bs-secondary-bg-rgb), var(--bs-bg-opacity)) !important;
 }
 
-.bg-body-tertiary {
+.bg-body-tertiary, .app-dropdown {
   --bs-bg-opacity: 1;
   background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;
 }
@@ -11576,4 +11576,16 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
+}
+.app-dropdown {
+  width: 240px;
+  margin-top: 16px;
+  transition: 0.3s all ease;
+  opacity: 0;
+  visibility: hidden;
+}
+.app-dropdown.active {
+  margin-top: 8px;
+  opacity: 1;
+  visibility: visible;
 }

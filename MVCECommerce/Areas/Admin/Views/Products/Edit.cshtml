@@ -1,4 +1,4 @@
-﻿@model MVCECommerce.Domain.Product
+﻿@model Product
 @{
     ViewData["Title"] = "Ürün Düzenle";
 }
@@ -6,12 +6,12 @@
 <form method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label class="form-label" asp-for="NameTr"></label>
-        <input class="form-control" asp-for="NameTr" placeholder="ürün adını yazınız..." />
+        <input class="form-control" asp-for="NameTr" placeholder="marka adını yazınız..." />
         <span class="text-danger" asp-validation-for="NameTr"></span>
     </div>
     <div class="mb-3">
         <label class="form-label" asp-for="NameEn"></label>
-        <input class="form-control" asp-for="NameEn" placeholder="ürün adını yazınız..." />
+        <input class="form-control" asp-for="NameEn" placeholder="marka adını yazınız..." />
         <span class="text-danger" asp-validation-for="NameEn"></span>
     </div>
     <div class="mb-3">
@@ -33,5 +33,5 @@
 </form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" /> //
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -1,4 +1,21 @@
-﻿$primary : #880077;
-$enable-rounded : false;
+﻿$primary: #880077;
+$enable-rounded: false;
 
 @import 'bootstrap/scss/bootstrap.scss';
+
+.app-dropdown {
+    @extend .position-absolute;
+    @extend .border;
+    @extend .bg-body-tertiary;
+    width: 240px;
+    margin-top: 16px;
+    transition: .3s all ease;
+    opacity: 0;
+    visibility: hidden;
+
+    &.active {
+        margin-top: 8px;
+        opacity: 1;
+        visibility: visible;
+    }
+}

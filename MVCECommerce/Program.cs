@@ -61,7 +61,13 @@ app.MapControllerRoute(
     name: "Areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
-app.MapControllerRoute(//defaýlt rota hep en sonda olsun. herþeye uyduðu için her zaman çalýþýr ve diðer alanlara inilmez
+app.MapControllerRoute(
+    name: "Catalog",
+    pattern: "{name}/-catalog-/{id}",
+    defaults:new {controller="Home", action="Index"}
+    );
+
+app.MapControllerRoute(//default rota hep en sonda olsun. herþeye uyduðu için her zaman çalýþýr ve diðer alanlara inilmez
     name: "Default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

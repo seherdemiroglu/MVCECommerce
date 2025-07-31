@@ -18,20 +18,13 @@
     <thead>
         <tr>
             <th>
-                <div class="d-flex align-items-center">
-                    Foto
-                </div>
+                Foto
             </th>
             <th>
-                <div class="d-flex align-items-center">
-                    Ad
-                </div>
+                Ad
             </th>
-
             <th>
-                <div class="d-flex align-items-center">
-                    Aktif
-                </div>
+                Aktif
             </th>
             <th>
                 <div class="d-flex align-items-center">
@@ -44,49 +37,53 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td><img src="@Url.Action("Product","Images",new { area=string.Empty, id=item.Id })" height="60" width="80" onerror="this.error = null; this.src='/images/noimage.png'" style="object-fit:contain"/></td>
+                <td>
+                    <img src="@Url.Action("Product", "Images", new { area = string.Empty, id = item.Id})" height="60" width="80" onerror="this.error = null; this.src = '/images/noimage.png'" style="object-fit: contain" />
+                </td>
                 <td>@item.NameTr</td>
                 <td>
-                    @if (item.IsEnabled == true)
+                    @if (item.IsEnabled)
                     {
                         <i class="fa fa-check text-success" aria-hidden="true"></i>
                     }
                     else
                     {
-                        <i class="fa fa-window-close text-danger" aria-hidden="true"></i>
+                        <i class="fa fa-times text-danger" aria-hidden="true"></i>
                     }
                 </td>
                 <td>
                     <div class="d-flex justify-content-center">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning mr-2"><i class="fas fa-pen" aria-hidden="true"></i></a>
-                        @*program.cs deki ""pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");"" rotadaki id kısmına gönderdiğimiz id eklenecek*@
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger remove-btn mr-2"><i class="fas fa-trash" aria-hidden="true"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning mr-2">
+                            <i class="fas fa-pen" aria-hidden="true"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger remove-btn">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                        </a>
                     </div>
 
                 </td>
             </tr>
         }
-
     </tbody>
 </table>
 
-@section Scripts{
+@section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(() => {
             $('.remove-btn').on('click', (e) => {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'uyarı!',
-                    html: 'Bu kayıt tamamen silinecektir, devam etmek istiyor musunuz?',
+                    title: 'Uyarı!',
+                    html: 'Bu kayıt tamamen silinecektir. Devam etmek istiyor musunuz?',
                     showCancelButton: true,
                     cancelButtonText: 'İptal',
-                    confirmButtonText:'Sil'
-
-                }).then((result) => {
-                    if (result.isConfirmed)
-                        window.location = $(e.currentTarget).attr('href');
-                });
+                    confirmButtonText: 'Sil',
+                })
+                    .then((result) => {
+                        if (result.isConfirmed)
+                            window.location = $(e.currentTarget).attr('href');
+                    });
                 return false;
             });
         });
