@@ -1,0 +1,9 @@
+﻿@model IEnumerable<ProductTileViewModel>
+<div class="row row-cols-1 row-cols-md-4 g-3">
+    @foreach (var product in Model)
+    {
+        <div class="col">
+            <partial name="_ProductTilePartial" model="product" />
+        </div>
+    }
+</div>

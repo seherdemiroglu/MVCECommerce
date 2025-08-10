@@ -1,56 +1,117 @@
-﻿@inject MVCECommerce.MVCECommerceDbContext dbContext
+﻿@inject MVCECommerceDbContext dbContext
 
 @{
-    var catalogs = dbContext.Catalogs.Where(p => p.IsEnabled).OrderBy(p => p.NameTr).ToList();
+    var catalogs = dbContext.Catalogs.Where(p => p.IsEnabled && p.Products.Any(q => q.IsEnabled)).OrderBy(p => p.NameEn).ToList();
+    var categories = dbContext.Categories.Where(p => p.IsEnabled && p.Products.Any(q => q.IsEnabled)).OrderBy(p => p.NameEn).ToList();
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MVCECommerce</title>
+    <title>@ViewData["Title"] - MVCECommerce</title>
     <meta name="viewport" content="width=device-width" />
     <link href="~/css/site.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary py-4">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" asp-action="Index" asp-controller="Home">
                 <span class="text-warning fw-bold">MVC</span><span class="text-body-secondary">ECommerce</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form asp-controller="Home" asp-action="Search" method="get" class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" name="keyword" />
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" asp-action="Index" asp-controller="Home">HOME</a>
                     </li>
                     <li class="nav-item app-dropdown-toggle">
-                        <a class="nav-link" href="#">KATALOGLAR</a>
+                        <a class="nav-link" href="#">CATALOGS</a>
                         <div class="app-dropdown">
                             <ul class="nav flex-column">
                                 @foreach (var catalog in catalogs)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link" asp-route="Catalog" asp-route-name="@catalog.NameTr.ToSafeUrlString()" asp-route-id="@catalog.Id">@catalog.NameTr</a>
+                                        <a class="nav-link" asp-route="Catalog" asp-route-name="@catalog.NameEn.ToSafeUrlString()" asp-route-id="@catalog.Id">@catalog.NameEn</a>
                                     </li>
                                 }
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item app-dropdown-toggle">
+                        <a class="nav-link" href="#">CATEGORIES</a>
+                        <div class="app-dropdown">
+                            <ul class="nav flex-column">
+                                @foreach (var category in categories)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-route="Category" asp-route-name="@category.NameEn.ToSafeUrlString()" asp-route-id="@category.Id">@category.NameEn</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                        var shoppingCartItems = dbContext.ShoppingCartItems.Where(p => p.UserId == userId).Sum(p => p.Quantity);
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Profile" asp-controller="Account">
+                                <i class="bi bi-person"></i>
+                                @User.FindFirst(ClaimTypes.GivenName)!.Value
+                            </a>
+                        </li>
+                        <li class="nav-item me-4">
+                            <a asp-action="Checkout" asp-controller="Account" class="nav-item btn btn-link position-relative">
+                                <i class="bi bi-cart"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                    @(shoppingCartItems > 99 ? "99+" : shoppingCartItems)
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Logout" asp-controller="Account">
+                                <i class="bi bi-power"></i>
+                                Signout
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Login" asp-controller="Account">
+                                <i class="bi bi-person-check"></i>
+                                Signin
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Register" asp-controller="Account">
+                                <i class="bi bi-person-plus"></i>
+                                Register
+                            </a>
+                        </li>
+                    }
                 </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
-    @RenderBody()
+    <main class="container">
+        @RenderBody()
+    </main>
+    <footer></footer>
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", false)
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.3/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.3/dist/sweetalert2.min.css">
     <script>
         $(() => {
             $('.app-dropdown-toggle').on('mouseenter', (e) => {
@@ -60,6 +121,20 @@
                 $(e.currentTarget).find('div').removeClass('active');
             });
         });
+
+        @if (TempData["success"]!=null)
+        {
+        <text>
+        Swal.fire({
+            icon: 'success',
+            title: 'Thanks',
+            html: '@TempData["success"]',
+            toast: true,
+            position: 'top-end',
+        })
+        </text>
+        }
+
     </script>
 </body>
 </html>

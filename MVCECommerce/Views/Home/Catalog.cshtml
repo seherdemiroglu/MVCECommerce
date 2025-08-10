@@ -1,0 +1,18 @@
+﻿@model Catalog
+@{
+    ViewData["Title"] = Model.NameTr;
+    var products = Model.Products.Select(p => new ProductTileViewModel
+    {
+        Id = p.Id,
+        Name = p.NameTr,
+        Price = p.Price,
+        CategoryId = p.CategoryId,
+        CategoryName = p.Category.NameTr,
+        BrandId = p.BrandId,
+        BrandName = null
+    });
+
+}
+<div class="display-6">@Model.NameTr</div>
+
+<partial name="_ProductListPartial" model="@products" />

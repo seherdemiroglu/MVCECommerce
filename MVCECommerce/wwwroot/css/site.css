@@ -4,6 +4,7 @@
  * Copyright 2011-2025 The Bootstrap Authors
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 :root,
 [data-bs-theme=light] {
   --bs-blue: #0d6efd;
@@ -11577,15 +11578,30 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+body {
+  font-family: "Inter", sans-serif;
+}
+
 .app-dropdown {
   width: 240px;
-  margin-top: 16px;
+  margin-top: 32px;
   transition: 0.3s all ease;
   opacity: 0;
   visibility: hidden;
+  z-index: 1;
 }
 .app-dropdown.active {
   margin-top: 8px;
   opacity: 1;
   visibility: visible;
+}
+
+.splide__slide img {
+  width: 100%;
+  height: auto;
+}
+
+.app-product-name {
+  height: 48px;
+  overflow: hidden;
 }

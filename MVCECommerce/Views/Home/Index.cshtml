@@ -1,4 +1,108 @@
-﻿
+﻿@inject MVCECommerceDbContext dbContext
 @{
+    ViewData["Title"] = "Welcome";
+
+    var featuredProducts = dbContext
+         .Products
+         .Where(p => p.IsEnabled)
+         .OrderByDescending(p => p.Views)
+         .Take(8)
+         .Select(p => new ProductTileViewModel
+         {
+             Id = p.Id,
+             Name = p.NameEn,
+             Price = p.Price,
+             CategoryId = p.CategoryId,
+             CategoryName = p.Category.NameEn,
+             BrandId = p.BrandId,
+             BrandName = p.Brand.Name
+         })
+         .ToList();
+
+    var newestProducts = dbContext
+        .Products
+        .Where(p => p.IsEnabled)
+        .OrderByDescending(p => p.CreatedAt)
+        .Take(8)
+        .Select(p => new ProductTileViewModel
+        {
+            Id = p.Id,
+            Name = p.NameEn,
+            Price = p.Price,
+            CategoryId = p.CategoryId,
+            CategoryName = p.Category.NameEn,
+            BrandId = p.BrandId,
+            BrandName = p.Brand.Name
+        })
+        .ToList();
+
+    var carouselImages = dbContext
+        .CarouselImages
+        .Where(p => p.IsEnabled && p.CatalogId == null)
+        .Select(p => new { p.Id, p.Url })
+        .ToList();
+
+
+    var brands = dbContext
+        .Brands
+        .Where(p => p.IsEnabled && p.Logo != null && p.Products.Any(q => q.IsEnabled))
+        .Select(p => new { p.Id, p.Name })
+        .ToList();
 }
-<p>hello</p>
+
+<section id="image-carousel" class="splide">
+    <div class="splide__track">
+        <ul class="splide__list">
+            @foreach (var image in carouselImages)
+            {
+                <li class="splide__slide">
+                    @if (image.Url == null)
+                    {
+                        <img src="@Url.Action("CarouselImage", "Images", new { id = image.Id })" alt="">
+                    }
+                    else
+                    {
+                        <a href="@image.Url" target="_blank">
+                            <img src="@Url.Action("CarouselImage", "Images", new { id = image.Id })" alt="">
+                        </a>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+<header class="py-3 display-5">Featured</header>
+<section class="mb-3">
+    <partial name="_ProductListPartial" model="featuredProducts" />
+</section>
+<section id="brand-carousel" class="mb-3">
+    <div class="splide__track">
+        <ul class="splide__list">
+            @foreach (var brand in brands)
+            {
+                <li class="splide__slide">
+                    <div class="p-2">
+                        @*seo uyumlu url****************************************************@
+                        <a class="m-2" asp-route="Brand" asp-route-id="@brand.Id" asp-route-name="@brand.Name.ToSafeUrlString()"> 
+                            <img src="@Url.Action("Brand", "Images", new { id = brand.Id })" alt="@brand.Name" height="40">
+                        </a>
+                    </div>
+
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+<header class="py-3 display-5">Latest</header>
+<section class="mb-3">
+    <partial name="_ProductListPartial" model="newestProducts" />
+</section>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script>
+        new Splide('#image-carousel').mount();
+        new Splide('#brand-carousel').mount();
+    </script>
+}

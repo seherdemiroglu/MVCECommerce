@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using MVCECommerce;
 using MVCECommerce.Domain;
-using MVCECommerce.Services;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using System.Data.Common;
@@ -10,6 +10,12 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
+
+builder
+    .Services
+    .AddMvc()
+    .AddViewLocalization();
+
 
 builder.Services.AddDbContext<MVCECommerceDbContext>(config =>
 {
@@ -49,7 +55,6 @@ builder
         });
     });
 
-builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 
@@ -57,15 +62,37 @@ app.UseStaticFiles();//wwwroot dosyasýný kullanabilmek için
 app.UseAuthentication();
 app.UseAuthorization();
 
+var supportedCultures = new[] { "en", "tr" };
+
+app.UseRequestLocalization(config =>
+{
+    config.DefaultRequestCulture = new RequestCulture(supportedCultures[0]);//Varsayýlan dil Ýngilizce ("en") olarak ayarlanýyor.örneðin almanca browserdan açýlýrsa ing
+    config.AddSupportedCultures(supportedCultures);//uygulamanýn destekleyeceði veri biçimlendirme kültürlerini belirtir (tarih, sayý, para birimi formatý vs.).
+    config.AddSupportedUICultures(supportedCultures);//Uygulamanýn destekleyeceði kullanýcý arayüzü kültürlerini belirtir (çeviri, metin vs.).
+});
+
+
+
+
+app.MapControllerRoute( //SEO uyumlu rota tanýmlamasý
+    name: "Catalog",
+    pattern: "{name}/-catalog-/{id}",
+    defaults:new {controller="Home", action="Catalog"}
+    );
+app.MapControllerRoute(
+    name: "Category",
+    pattern: "{name}-category-{id}",
+    defaults: new { controller = "Home", action = "Category" }
+    );
+app.MapControllerRoute(
+    name: "Brand",
+    pattern: "{name}-brand-{id}",
+    defaults: new { controller = "Home", action = "Brand" }
+    );
+
 app.MapControllerRoute(
     name: "Areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "Catalog",
-    pattern: "{name}/-catalog-/{id}",
-    defaults:new {controller="Home", action="Index"}
-    );
 
 app.MapControllerRoute(//default rota hep en sonda olsun. herþeye uyduðu için her zaman çalýþýr ve diðer alanlara inilmez
     name: "Default",

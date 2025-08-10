@@ -7,14 +7,12 @@ namespace MVCECommerce.Areas.Admin.Controllers
     public class ImagesController(MVCECommerceDbContext dbContext) : Controller
     {
 
-        [OutputCache(Duration =86400)]
-        public async Task<IActionResult> Brand(Guid id)
+        [OutputCache(Duration = 86400)]
+        public async Task<IActionResult> Brand(Guid id) //bunlar resimleri bi anda dbden çekmemek için. id leri tutup tek tek çekiyor
         {
-            var item=await dbContext.Brands.FindAsync(id);
-
-            return File(item.Logo,"image/webp");
+            var item = await dbContext.Brands.FindAsync(id);
+            return File(item.Logo, "image/webp");
         }
-
         [OutputCache(Duration = 86400)]
         public async Task<IActionResult> Product(Guid id)
         {

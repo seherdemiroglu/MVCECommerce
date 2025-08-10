@@ -1,0 +1,21 @@
+﻿@model Brand
+@{
+    ViewData["Title"] = Model.Name;
+    var products = Model.Products.Select(p => new ProductTileViewModel
+    {
+        Id = p.Id,
+        Name = p.NameEn,
+        Price = p.Price,
+        CategoryId = p.CategoryId,
+        CategoryName = p.Category.NameEn,
+        BrandId = p.BrandId,
+        BrandName = null
+    });
+
+}
+<div class="mb-3">
+    <img src="@Url.Action("Brand", "Images", new { id= Model.Id })" alt="@Model.Name" height="80" />
+</div>
+<div class="display-6">@Model.Name</div>
+
+<partial name="_ProductListPartial" model="@products" />

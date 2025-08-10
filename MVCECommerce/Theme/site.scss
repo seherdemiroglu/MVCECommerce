@@ -2,20 +2,37 @@
 $enable-rounded: false;
 
 @import 'bootstrap/scss/bootstrap.scss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+
+body {
+    font-family: "Inter", sans-serif;
+}
 
 .app-dropdown {
     @extend .position-absolute;
     @extend .border;
     @extend .bg-body-tertiary;
     width: 240px;
-    margin-top: 16px;
+    margin-top: 32px;
     transition: .3s all ease;
     opacity: 0;
     visibility: hidden;
+    z-index: 1;
 
     &.active {
         margin-top: 8px;
         opacity: 1;
         visibility: visible;
     }
+}
+
+.splide__slide img {
+    width: 100%;
+    height: auto;
+}
+
+.app-product-name {
+    height: 48px;
+    overflow: hidden;
 }

@@ -1,0 +1,29 @@
+﻿@model ProductTileViewModel
+<div class="card h-100">
+    <a asp-route="Product" asp-route-name="@Model.Name.ToSafeUrlString()" asp-route-id="@Model.Id">
+        <img src="@Url.Action("Product", "Images", new { id = Model.Id })" class="card-img-top" />
+    </a>
+    <div class="card-body">
+        <h5 class="card-title">
+            @Model.Price.ToString("C0", CultureInfo.CreateSpecificCulture("tr-TR"))
+        </h5>
+        <div class="small">
+            <a asp-route="Category" asp-route-name="@Model.CategoryName!.ToSafeUrlString()" asp-route-id="@Model.CategoryId">@Model.CategoryName</a>
+        </div>
+        <p class="card-text app-product-name">
+            @Model.Name
+        </p>
+
+    </div>
+    <div class="card-footer">
+        <div class="d-flex justify-content-center gap-3">
+            <a class="btn btn-outline-info" asp-route="Product" asp-route-name="@Model.Name.ToSafeUrlString()" asp-route-id="@Model.Id">
+                <i class="bi bi-search"></i>
+            </a>
+            <a href="#" class="btn btn-outline-primary">
+                <i class="bi bi-cart"></i>
+            </a>
+        </div>
+
+    </div>
+</div>
