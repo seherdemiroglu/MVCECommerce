@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MVCECommerce.Domain
 {
@@ -13,6 +14,9 @@ namespace MVCECommerce.Domain
 
         public Order? Order { get; set; }
         public Product? Product { get; set; }
+
+        [NotMapped]
+        public decimal Amount=>Price*Quantity;
     }
     public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {

@@ -82,8 +82,7 @@
             {
                 <li class="splide__slide">
                     <div class="p-2">
-                        @*seo uyumlu url****************************************************@
-                        <a class="m-2" asp-route="Brand" asp-route-id="@brand.Id" asp-route-name="@brand.Name.ToSafeUrlString()"> 
+                        <a class="m-2" asp-route="Brand" asp-route-id="@brand.Id" asp-route-name="@brand.Name.ToSafeUrlString()">
                             <img src="@Url.Action("Brand", "Images", new { id = brand.Id })" alt="@brand.Name" height="40">
                         </a>
                     </div>

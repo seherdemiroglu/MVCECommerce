@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MVCECommerce.Domain;
 using MVCECommerce.Models;
 using NETCore.MailKit.Core;
@@ -9,7 +10,7 @@ using System.Security.Claims;
 namespace MVCECommerce.Controllers;
 
 public class AccountController(UserManager<User> userManager, SignInManager<User> signInManager,
-        IEmailService emailService) : Controller//burada hem UserManager hem de SignInManager inject edildi
+        IEmailService emailService, MVCECommerceDbContext dbContext) : Controller//burada hem UserManager hem de SignInManager inject edildi
 {
     public IActionResult Login()
     {
@@ -136,6 +137,162 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
         var user = await userManager.FindByIdAsync(model.Id.ToString()!);
         var result = await userManager.ResetPasswordAsync(user!, model.Token!, model.Password!);
         return View("SetPasswordSuccess");
+    }
+
+    [Authorize]
+    public async Task<IActionResult> AddToCart(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var product = await dbContext.Products.SingleAsync(p => p.Id == id);
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.UserId == userId && p.ProductId == id);
+        if (item == null)
+        {
+            item = new ShoppingCartItem
+            {
+                ProductId = id,
+                UserId = userId,
+                Quantity = 1,
+            };
+            dbContext.ShoppingCartItems.Add(item);
+        }
+        else
+        {
+            item.Quantity++;
+            dbContext.ShoppingCartItems.Update(item);
+        }
+        TempData["success"] = "Product added to your cart successfully!";
+        await dbContext.SaveChangesAsync();
+        return RedirectToRoute("Product", new { id, name = product.NameEn.ToSafeUrlString() });
+    }
+
+
+    [Authorize]
+    public async Task<IActionResult> RemoveFromCart(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        await dbContext.ShoppingCartItems.Where(p => p.Id == id && p.UserId == userId!).ExecuteDeleteAsync();
+        return RedirectToAction(nameof(Checkout));
+    }
+
+    [Authorize]
+    public IActionResult Checkout()
+    {
+        return View();
+    }
+    [Authorize]
+    public IActionResult Payment()
+    {
+        return View();
+    }
+
+    [Authorize]
+    public async Task<IActionResult> SetQuantity(Guid id, int Quantity)
+    {
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.Id == id);
+        item.Quantity = Quantity;
+        dbContext.Update(item);
+        await dbContext.SaveChangesAsync();
+        return RedirectToAction(nameof(Checkout));
+    }
+    [Authorize]
+    public async Task<IActionResult> IncreaseQuantity(Guid id)
+    {
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.Id == id);
+        item.Quantity++;
+        dbContext.Update(item);
+        await dbContext.SaveChangesAsync();
+        return RedirectToAction(nameof(Checkout));
+    }
+
+    [Authorize]
+    public async Task<IActionResult> DecreaseQuantity(Guid id)
+    {
+        var item = await dbContext.ShoppingCartItems.SingleOrDefaultAsync(p => p.Id == id);
+        if (item.Quantity > 1)
+            item.Quantity--;
+        dbContext.Update(item);
+        await dbContext.SaveChangesAsync();
+        return RedirectToAction(nameof(Checkout));
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> CreateAddress([FromBody] AddressViewModel model)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var address = new Address
+        {
+            CityId = model.CityId,
+            Name = model.Name,
+            Text = model.Text,
+            ZipCode = model.ZipCode,
+            UserId = userId,
+        };
+        dbContext.Add(address);
+        await dbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [Authorize]
+    public async Task<IActionResult> UserAddresses()
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var model = await dbContext
+            .Addresses
+            .Where(p => p.UserId == userId)
+            .Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Text,
+            })
+            .ToListAsync();
+
+        return Json(model);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Pay([FromBody] PaymentViewModel model)
+    {
+        //payment logic ....
+#if DEBUG
+        Thread.Sleep(5000);
+#endif
+        // /payment logic
+
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var order = new Order
+        {
+            Date = DateTime.Now,
+            ShippingAddressId = model.ShippingAddressId,
+            UserId = userId,
+            Items = dbContext
+                .ShoppingCartItems
+                .Include(p => p.Product)
+                .Where(p => p.UserId == userId).Select(p => new OrderItem
+                {
+                    Price = p.Product.Price,
+                    Quantity = p.Quantity,
+                    ProductId = p.ProductId,
+                }).ToList(),
+        };
+
+        dbContext.Add(order);
+        await dbContext.SaveChangesAsync();
+        await dbContext.ShoppingCartItems.Where(p => p.UserId == userId).ExecuteDeleteAsync();
+
+        return Ok();
+    }
+
+
+    [Authorize]
+    public async Task<IActionResult> Profile()
+    {
+        var user = await userManager.GetUserAsync(User);
+        return View(user);
     }
 }
 

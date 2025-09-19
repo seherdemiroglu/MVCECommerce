@@ -1,23 +1,108 @@
 ﻿@model Product
+
+@inject MVCECommerce.MVCECommerceDbContext dbContext
 @{
     ViewData["Title"] = "Ürün Düzenle";
+    var categories = dbContext.Categories.OrderBy(p => p.NameTr).ToList();
+    var specs = dbContext.Specifications.OrderBy(p => p.NameTr).ToList();
+    var categoySelectList = new SelectList(categories.Select(p => new { p.Id, p.NameTr }), "Id", "NameTr");
+    var brands = new SelectList(dbContext.Brands.OrderBy(p => p.Name).ToList(), "Id", "Name");
+    var catalogs = new SelectList(dbContext.Catalogs.OrderBy(p => p.NameTr).ToList(), "Id", "NameTr");
 }
 
 <form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Image" />
+    <div class="mb-3">
+        <label class="form-label" asp-for="CategoryId"></label>
+        <select class="form-control" asp-for="CategoryId" asp-items="categoySelectList">
+            <option disabled selected value="">Seçiniz...</option>
+        </select>
+    </div>
+    <div class="mb-3 d-flex">
+        <div class="row row-cols-1 row-cols-md-3">
+            @foreach (var spec in specs)
+            {
+                <div class="col spec-panel" data-category-id="@spec.CategoryId">
+                    <div class="d-flex flex-column">
+                        <div class="p-2">@spec.NameTr</div>
+                        <input type="text" class="form-control" name="@spec.Id" value="@Model.Specs.SingleOrDefault(p=>p.SpecificationId == spec.Id)?.Value" />
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" asp-for="BrandId"></label>
+        <select class="form-control" asp-for="BrandId" asp-items="brands">
+            <option selected value="">Seçiniz...</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="SelectedCatalogs"></label>
+        <div class="row">
+            @foreach (var item in catalogs)
+            {
+                <div class="col-2">
+                    <div class="form-check">
+                        @if (Model.Catalogs.Any(p => p.Id.ToString() == item.Value))
+                        {
+                            <input class="form-check-input" checked type="checkbox" name="SelectedCatalogs" id="catalog_@item.Value" value="@item.Value">
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" name="SelectedCatalogs" id="catalog_@item.Value" value="@item.Value">
+                        }
+                        <label class="form-check-label" for="catalog_@item.Value">
+                            @item.Text
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
     <div class="mb-3">
         <label class="form-label" asp-for="NameTr"></label>
-        <input class="form-control" asp-for="NameTr" placeholder="marka adını yazınız..." />
+        <input class="form-control" asp-for="NameTr" placeholder="ürün adını yazınız..." />
         <span class="text-danger" asp-validation-for="NameTr"></span>
     </div>
     <div class="mb-3">
         <label class="form-label" asp-for="NameEn"></label>
-        <input class="form-control" asp-for="NameEn" placeholder="marka adını yazınız..." />
+        <input class="form-control" asp-for="NameEn" placeholder="ürün adını yazınız..." />
         <span class="text-danger" asp-validation-for="NameEn"></span>
     </div>
     <div class="mb-3">
+        <label class="form-label" asp-for="Price"></label>
+        <input class="form-control" asp-for="Price" placeholder="ürün adını yazınız..." />
+        <span class="text-danger" asp-validation-for="Price"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="DescriptionTr"></label>
+        <textarea class="form-control" asp-for="DescriptionTr" placeholder="ürün özelliklerini yazınız..."></textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="DescriptionEn"></label>
+        <textarea class="form-control" asp-for="DescriptionEn" placeholder="ürün özelliklerini yazınız..."></textarea>
+    </div>
+    <div class="mb-3">
+        <div class="d-flex mb-3">
+            <div class="border p-2">
+                <img id="previewImage" src="@Url.Action("Product", "Images", new { area = string.Empty, id= Model.Id })" style="object-fit: cover;" onerror="this.error = null; this.src = '/images/noimage.png'" width="320" height="240" />
+            </div>
+        </div>
         <div class="custom-file">
             <input type="file" class="custom-file-input" asp-for="ImageFile">
-            <label class="custom-file-label" asp-for="ImageFile">Dosya Seçiniz</label>
+            <label class="custom-file-label" asp-for="ImageFile">Ürün görseli seçiniz</label>
+        </div>
+    </div>
+    <div class="mb-3">
+        <div class="d-flex mb-3" id="galleryPanel">
+
+        </div>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" multiple asp-for="ImageFiles">
+            <label class="custom-file-label" asp-for="ImageFiles">Giğer ürün görsellerini seçiniz</label>
         </div>
     </div>
     <div class="mb-3">
@@ -33,5 +118,50 @@
 </form>
 
 @section Scripts {
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(() => {
+            $('textarea').summernote({
+                height: 300,
+            });
+
+            const showSpecs = (e) => {
+                $('.spec-panel').addClass('d-none');
+                $(`.spec-panel[data-category-id=${e}]`).removeClass('d-none');
+            };
+
+            showSpecs(`@Model.CategoryId`);
+
+            $('#CategoryId').on('change', (e) => showSpecs($(e.currentTarget).val()));
+
+            $('#ImageFile').on('change', (e) => {
+                const fileReader = new FileReader();
+                fileReader.onload = (e) => {
+                    $('#previewImage').attr('src', fileReader.result);
+                };
+                fileReader.readAsDataURL(e.currentTarget.files[0]);
+            });
+
+
+            $('#ImageFiles').on('change', (e) => {
+                const files = e.currentTarget.files;
+                for (i in files) {
+                    const fileReader = new FileReader();
+                    fileReader.onload = (evt) => {
+                        $('#galleryPanel').append(`
+                            <div class="border p-2 m-2">
+                                <img id="previewImage" src="${evt.target.result}" style="object-fit: cover;" width="160" height="120" />
+                            </div>
+                            `);
+                    };
+                    fileReader.readAsDataURL(e.currentTarget.files[i]);
+                }
+
+            });
+
+        });
+    </script>
 }

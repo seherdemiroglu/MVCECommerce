@@ -36,5 +36,8 @@ namespace MVCECommerce
         public required DbSet<ProductSpecification> ProductSpecifications { get; set; }
         public required DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
         public required DbSet<Specification> Specifications { get; set; }
+
+        public required DbSet<CreditCard> CreditCards { get; set; }
+        public required DbSet<Installment> Installments { get; set; }
     }
 }

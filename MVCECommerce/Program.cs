@@ -91,6 +91,12 @@ app.MapControllerRoute(
     );
 
 app.MapControllerRoute(
+    name: "Product",
+    pattern: "{name}-product-{id}",
+    defaults: new { controller = "Home", action = "Detail" }
+    );
+
+app.MapControllerRoute(
     name: "Areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
@@ -136,5 +142,45 @@ if(userManager.FindByNameAsync("admin@mvc.com").Result is null)
     userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, user.GivenName)).Wait();
 }
 
+#if DEBUG
+
+{
+    var productAdmin = new User
+    {
+        Date = DateTime.UtcNow,
+        Gender = Genders.Male,
+        GivenName = "Product Admin",
+        UserName = "padmin@mvc.com",
+        Email = "padmin@mvc.com",
+        EmailConfirmed = true,
+    };
+    if (userManager.FindByNameAsync("padmin@mvc.com").Result is null)
+    {
+        userManager.CreateAsync(productAdmin, "Productadmin1?").Wait();
+        userManager.AddToRoleAsync(productAdmin, "ProductAdministrators").Wait();
+        userManager.AddClaimAsync(productAdmin, new Claim(ClaimTypes.GivenName, productAdmin.GivenName)).Wait();
+    }
+}
+
+
+{
+    var orderAdmin = new User
+    {
+        Date = DateTime.UtcNow,
+        Gender = Genders.Male,
+        GivenName = "Order Admin",
+        UserName = "oadmin@mvc.com",
+        Email = "oadmin@mvc.com",
+        EmailConfirmed = true,
+    };
+    if (userManager.FindByNameAsync("oadmin@mvc.com").Result is null)
+    {
+        userManager.CreateAsync(orderAdmin, "Orderadmin1?").Wait();
+        userManager.AddToRoleAsync(orderAdmin, "OrderAdministrators").Wait();
+        userManager.AddClaimAsync(orderAdmin, new Claim(ClaimTypes.GivenName, orderAdmin.GivenName)).Wait();
+    }
+}
+
+#endif
 
 app.Run();

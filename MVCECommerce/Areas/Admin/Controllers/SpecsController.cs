@@ -12,14 +12,15 @@ namespace MVCECommerce.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var items = await dbContext
-            .Categories
-            .Include(p => p.Specifications)
-            .AsSplitQuery()
-            .AsNoTracking()
-            .OrderBy(p => p.NameTr)
-            .ToListAsync();
+                .Categories
+                .Include(p => p.Specifications)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .OrderBy(p => p.NameTr)
+                .ToListAsync();
             return View(items);
         }
+
         public IActionResult Create()
         {
             return View(new Specification { });
@@ -37,6 +38,7 @@ namespace MVCECommerce.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         public async Task<IActionResult> Edit(Guid id)
         {
             var item = await dbContext.Specifications.SingleOrDefaultAsync(p => p.Id == id);
@@ -47,12 +49,14 @@ namespace MVCECommerce.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(Specification model)
         {
             var item = await dbContext.Specifications.SingleOrDefaultAsync(p => p.Id == model.Id);
+
             item.NameTr = model.NameTr;
             item.NameEn = model.NameEn;
             item.IsEnabled = model.IsEnabled;
 
             dbContext.Update(item);
             await dbContext.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

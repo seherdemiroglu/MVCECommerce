@@ -36,7 +36,8 @@ MVCECommerceDbContext dbContext
         specs
             .Where(p => !string.IsNullOrEmpty(form[p.Id.ToString()]))
             .ToList()
-            .ForEach(p => {
+            .ForEach(p =>
+            {
                 model.Specs.Add(new ProductSpecification
                 {
                     SpecificationId = p.Id,
@@ -99,7 +100,11 @@ MVCECommerceDbContext dbContext
 
     public async Task<IActionResult> Edit(Guid id)
     {
-        var item = await dbContext.Products.SingleOrDefaultAsync(p => p.Id == id);
+        var item = await dbContext
+            .Products
+            .Include(p => p.Catalogs)
+            .Include(p => p.Specs)
+            .SingleOrDefaultAsync(p => p.Id == id);
         return View(item);
     }
 
@@ -110,8 +115,34 @@ MVCECommerceDbContext dbContext
 
         item.NameTr = model.NameTr;
         item.NameEn = model.NameEn;
+        item.DescriptionEn = model.DescriptionEn;
+        item.DescriptionTr = model.DescriptionTr;
+        item.Price = model.Price;
+        item.BrandId = model.BrandId;
+        item.CategoryId = model.CategoryId;
+        item.Image = model.Image;
 
         item.IsEnabled = model.IsEnabled;
+
+
+        var form = Request.Form;
+
+        await dbContext.ProductSpecifications.Where(p => p.ProductId == model.Id).ExecuteDeleteAsync();
+
+        var specs = await dbContext.Specifications.ToListAsync();
+
+        specs
+            .Where(p => !string.IsNullOrEmpty(form[p.Id.ToString()]))
+            .ToList()
+            .ForEach(p =>
+            {
+                model.Specs.Add(new ProductSpecification
+                {
+                    SpecificationId = p.Id,
+                    Value = form[p.Id.ToString()]
+                });
+            });
+
 
         if (model.ImageFile is not null)
         {

@@ -1,0 +1,192 @@
+﻿@model Product
+@inject MVCECommerceDbContext dbContext
+
+@{
+    ViewData["Title"] = Model.NameEn;
+    var avg = 3.8;
+    var galleryImageCounter = 0;
+    List<string> images = [];
+    images.Add(Url.Action("Product", "Images", new { id = Model.Id }));
+    images.AddRange(Model.ProductImages.Select(p => Url.Action("ProductImage", "Images", new { id = p.Id })));
+    var creditCards = dbContext.CreditCards.Include(p => p.Installments).ToList();
+}
+
+<div class="row mb-3">
+    <div class="col-12 col-md-4">
+        <div class="d-flex flex-column gap-3">
+            <section id="image-gallery" class="splide">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        @foreach (var image in images)
+                        {
+                            <li class="splide__slide">
+                                <a href="@image" data-title="@Model.NameEn" data-lightbox="gallery">
+                                    <img src="@image" class="img-fluid" />
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </section>
+            <div class="row row-cols-4">
+                @foreach (var image in images)
+                {
+                    <div class="col">
+                        <img src="@image" height="60" data-index="@(galleryImageCounter++)" class="gallery-image p-1 border rounded" />
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+    <div class="col-12 col-md-8">
+        <div class="d-flex flex-column gap-3">
+            <div>
+                @if (Model.Brand != null)
+                {
+                    <a class="text-decoration-none fw-bold" asp-route="Brand" asp-route-name="@Model.Brand.Name" asp-route-id="@Model.BrandId">
+                        @Model.Brand.Name
+                    </a>
+                }
+                @Model.NameEn
+            </div>
+            <div>
+                <div class="d-flex gap-1 text-warning">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        if (i < avg && i != Math.Floor(avg))
+                        {
+                            <i class="bi bi-star-fill"></i>
+                        }
+                        else if (i == Math.Floor(avg))
+                        {
+                            <i class="bi bi-star-half"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-star"></i>
+                        }
+                    }
+                </div>
+
+
+                @if (Model.Comments.Any())
+                {
+                    @Model.Comments.Average(p => p.Score).ToString("N1")
+                }
+                else
+                {
+                    <span>Henüz değerlendirilmedi...</span>
+                }
+                <div class="text-success display-6 fw-bold">
+                    ₺ @Model.Price.ToString("n2")
+                </div>
+                <div>
+                    <a asp-action="AddToCart" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-success">
+                        <i class="bi bi-cart"></i>
+                        Add To Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-descriptions-tab" data-bs-toggle="tab" data-bs-target="#nav-descriptions" type="button" role="tab" aria-controls="nav-descriptions" aria-selected="true">Descriptions</button>
+        <button class="nav-link" id="nav-comments-tab" data-bs-toggle="tab" data-bs-target="#nav-comments" type="button" role="tab" aria-controls="nav-comments" aria-selected="false">Comments <span class="badge bg-secondary">@Model.Comments.Count()</span></button>
+        <button class="nav-link" id="nav-payment-tab" data-bs-toggle="tab" data-bs-target="#nav-payment" type="button" role="tab" aria-controls="nav-payment" aria-selected="false">Payment/Instalments</button>
+        <button class="nav-link" id="nav-refund-tab" data-bs-toggle="tab" data-bs-target="#nav-refund" type="button" role="tab" aria-controls="nav-refund" aria-selected="false">Terms of Refund</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-descriptions" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+        <div class="p-3">
+            @Html.Raw(Model.DescriptionEn)
+            <h4>Specifications</h4>
+            <table class="table table-bordered">
+                <tbody>
+                    @foreach (var spec in Model.Specs)
+                    {
+                        <tr>
+                            <th>@spec.Specification.NameEn</th>
+                            <td>@spec.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">...</div>
+    <div class="tab-pane fade" id="nav-payment" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+        <div class="p-3">
+            <div class="row row-cols-1 row-cols-md-4">
+                @foreach (var creditCard in creditCards)
+                {
+                    <div class="col small">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="bg-body-tertiary text-center" colspan="3">
+                                        <img src="~/images/creditcards/@(creditCard.Name).svg" height="32" />
+                                    </th>
+                                </tr>
+                                <tr class="text-body-secondary">
+                                    <th>Taksit</th>
+                                    <th>Tutarı</th>
+                                    <th>Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 2; i <= 12; i++)
+                                {
+                                    var installment = creditCard.Installments.SingleOrDefault(p => p.Count == i);
+                                    if (installment == null)
+                                    {
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        var amount = (Model.Price * installment.Rate);
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>₺ @((amount / i).ToString("N2"))</td>
+                                            <td>₺ @(amount.ToString("N2"))</td>
+                                        </tr>
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="nav-refund" role="tabpanel" aria-labelledby="nav-disabled-tab" tabindex="0">
+        ....
+
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha512-xtV3HfYNbQXS/1R1jP53KbFcU9WXiSA1RFKzl5hRlJgdOJm4OxHCWYpskm6lN0xp0XtKGpAfVShpbvlFH3MDAA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha512-KbRFbjA5bwNan6DvPl1ODUolvTTZ/vckssnFhka5cG80JVa5zSlRPCr055xSgU/q6oMIGhZWLhcbgIC0fyw3RQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(() => {
+            const gallerySplide = new Splide('#image-gallery');
+            gallerySplide.mount();
+
+            $('.gallery-image').on('mouseover click', (e) => {
+                const i = $(e.currentTarget).data('index');
+                gallerySplide.go(i);
+            });
+        });
+    </script>
+}

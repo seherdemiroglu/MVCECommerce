@@ -8,15 +8,23 @@ namespace MVCECommerce.Areas.Admin.Controllers
     {
 
         [OutputCache(Duration = 86400)]
-        public async Task<IActionResult> Brand(Guid id) //bunlar resimleri bi anda dbden çekmemek için. id leri tutup tek tek çekiyor
+        public async Task<IActionResult> Brand(Guid id)
         {
             var item = await dbContext.Brands.FindAsync(id);
             return File(item.Logo, "image/webp");
         }
+
         [OutputCache(Duration = 86400)]
         public async Task<IActionResult> Product(Guid id)
         {
             var item = await dbContext.Products.FindAsync(id);
+            return File(item.Image, "image/webp");
+        }
+
+        [OutputCache(Duration = 86400)]
+        public async Task<IActionResult> ProductImage(Guid id)
+        {
+            var item = await dbContext.ProductImages.FindAsync(id);
             return File(item.Image, "image/webp");
         }
 
