@@ -3,12 +3,19 @@
 
 @{
     ViewData["Title"] = Model.NameEn;
-    var avg = 3.8;
+    var avg = 0.0;
+    if (Model.Comments.Any())
+    {
+        avg = Model.Comments.Average(p => p.Score);
+    }
     var galleryImageCounter = 0;
     List<string> images = [];
     images.Add(Url.Action("Product", "Images", new { id = Model.Id }));
     images.AddRange(Model.ProductImages.Select(p => Url.Action("ProductImage", "Images", new { id = p.Id })));
     var creditCards = dbContext.CreditCards.Include(p => p.Installments).ToList();
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? default(Guid).ToString());
+
+    var isOrdered = dbContext.OrderItems.Any(p => p.ProductId == Model.Id && p.Order.UserId == userId && p.Order.Status == OrderStatus.Shipped);
 }
 
 <div class="row mb-3">
@@ -51,28 +58,27 @@
                 @Model.NameEn
             </div>
             <div>
-                <div class="d-flex gap-1 text-warning">
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        if (i < avg && i != Math.Floor(avg))
-                        {
-                            <i class="bi bi-star-fill"></i>
-                        }
-                        else if (i == Math.Floor(avg))
-                        {
-                            <i class="bi bi-star-half"></i>
-                        }
-                        else
-                        {
-                            <i class="bi bi-star"></i>
-                        }
-                    }
-                </div>
-
-
                 @if (Model.Comments.Any())
                 {
-                    @Model.Comments.Average(p => p.Score).ToString("N1")
+                    <div class="d-flex gap-1 text-warning">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            if (i < Math.Floor(avg))
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            else if (avg > i && avg < i + 1)
+                            {
+                                <i class="bi bi-star-half"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+
+                        }
+                    </div>
+                    @avg.ToString("N1")
                 }
                 else
                 {
@@ -99,7 +105,7 @@
         <button class="nav-link" id="nav-refund-tab" data-bs-toggle="tab" data-bs-target="#nav-refund" type="button" role="tab" aria-controls="nav-refund" aria-selected="false">Terms of Refund</button>
     </div>
 </nav>
-<div class="tab-content" id="nav-tabContent">
+<div class="tab-content" id="nav-tabContent" style="min-height: 600px;">
     <div class="tab-pane fade show active" id="nav-descriptions" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
         <div class="p-3">
             @Html.Raw(Model.DescriptionEn)
@@ -117,7 +123,36 @@
             </table>
         </div>
     </div>
-    <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">...</div>
+    <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+        <div class="p-3">
+            @if (User.Identity.IsAuthenticated && isOrdered)
+            {
+                <div class="card mb-3">
+                    <div class="card-header">Yorum Ekle</div>
+                    <div class="card-body">
+                        <partial name="_CommentFormPartial" model="@new CommentViewModel { ProductId = Model.Id, ProductName = Model.NameEn }" />
+                    </div>
+                </div>
+            }
+
+            @foreach (var comment in Model.Comments.OrderByDescending(p => p.Date))
+            {
+                <div class="card mb-1">
+                    <div class="card-header d-flex gap-3 align-items-center">
+                        <img src="https://api.dicebear.com/9.x/initials/svg?seed=@comment.User.GivenName" height="32" />
+                        <div class="fw-bold">@comment.User.GivenName</div>
+                        <div class="ms-auto">@comment.Date.ToLocalTime().Humanize()</div>
+                    </div>
+                    <div class="card-body">
+                        @comment.Text
+                    </div>
+                </div>
+            }
+
+        </div>
+
+
+    </div>
     <div class="tab-pane fade" id="nav-payment" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
         <div class="p-3">
             <div class="row row-cols-1 row-cols-md-4">

@@ -1,0 +1,24 @@
+﻿@model CommentViewModel
+
+<form asp-controller="Account" asp-action="Comment" method="post">
+    <input asp-for="ProductId" type="hidden" />
+    <input asp-for="ProductName" type="hidden" />
+    <div class="mb-3">
+        <label asp-for="Text" class="form-label"></label>
+        <textarea asp-for="Text" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label"></label>
+        <select asp-for="Rating" class="form-select">
+            <option>5</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+            <option>1</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        Gönder
+    </button>
+</form>

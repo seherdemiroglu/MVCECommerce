@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Order>
+@foreach (var order in Model)
+{
+    <div class="card mb-3">
+        <div class="card-header d-flex align-items-center gap-3">
+            <div>
+                <button type="button" class="btn btn-circle" data-bs-toggle="collapse" data-bs-target="#items_@order.Id">
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+            </div>
+            <div class="flex-fill">@order.Date.Humanize()</div>
+            <div class="text-secondary fw-bold">@order.GrandTotal.ToString("n2")</div>
+            <span class="text-success ms-auto">
+                @order.Status
+            </span>
+        </div>
+        <div class="card-body collapse" id="items_@order.Id">
+            <table class="table table-bordered">
+                <colgroup>
+                    <col width="120" />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                </colgroup>
+                <tbody>
+                    @foreach (var item in order.Items)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@Url.Action("Product", "Images", new { id = item.ProductId })" height="60" class="img-thumbnail" />
+                            </td>
+                            <td>
+                                <a asp-route="Product" asp-route-id="@item.ProductId" asp-route-name="@item.Product.NameEn.ToSafeUrlString()">
+                                    @item.Product.NameEn
+                                </a>
+                            </td>
+                            <td>
+                                @item.Quantity
+                            </td>
+                            <td>
+                                @item.Price.ToString("n2")
+                            </td>
+                            <td>
+                                @item.Amount.ToString("n2")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end">Total</td>
+                        <td>@order.GrandTotal.ToString("n2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+}
+

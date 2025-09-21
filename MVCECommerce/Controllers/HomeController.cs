@@ -66,7 +66,7 @@ namespace MVCECommerce.Controllers
                 .Include(p => p.Catalogs)
                 .Include(p => p.ProductImages)
                 .Include(p => p.Brand)
-                .Include(p => p.Comments)
+                .Include(p => p.Comments).ThenInclude(p=>p.User)
                 .SingleOrDefaultAsync(p => p.Id == id);
             return View(model);
         }

@@ -1,0 +1,28 @@
+﻿@model User
+@inject RoleManager<Role> roleManager
+
+@{
+    ViewData["Title"] = $"{Model.GivenName} Yetkileri";
+}
+
+<form method="post">
+
+    <div class="row row-cols-1 row-cols-md-4">
+        @foreach (var role in roleManager.Roles.ToList())
+        {
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input" @(Model.UserRoles.Any(p => p.Role.Name == role.Name) ? "checked" : "") type="checkbox" name="Roles" value="@role.Name" id="check_@role.Name">
+                    <label class="form-check-label" for="check_@role.Name">
+                        @role.DisplayName
+                    </label>
+                </div>
+            </div>
+        }
+    </div>
+    <hr />
+    <div class="d-flex py-2">
+        <a asp-action="Index" class="btn btn-link ml-auto">İptal</a>
+        <button type="submit" class="btn btn-success">Kaydet</button>
+    </div>
+</form>

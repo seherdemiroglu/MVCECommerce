@@ -29,7 +29,14 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
 
         if (result.Succeeded)
         {
-            return Redirect(model.ReturnUrl ?? "/");
+            var user= await userManager.FindByNameAsync(model.UserName!);
+            if (!user.IsEnabled)
+            {
+                await signInManager.SignOutAsync();
+            }
+            else
+                return Redirect(model.ReturnUrl ?? "/");
+
         }
         ModelState.AddModelError("", "Geçersiz kullanıcı girişi");
         return View(model);
@@ -259,14 +266,15 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         //payment logic ....
 #if DEBUG
-        Thread.Sleep(5000);
+        //Thread.Sleep(5000);
+        await Task.Delay(5000);
 #endif
         // /payment logic
 
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var order = new Order
         {
-            Date = DateTime.Now,
+            Date = DateTime.UtcNow,
             ShippingAddressId = model.ShippingAddressId,
             UserId = userId,
             Items = dbContext
@@ -293,6 +301,32 @@ public class AccountController(UserManager<User> userManager, SignInManager<User
     {
         var user = await userManager.GetUserAsync(User);
         return View(user);
+    }
+
+    [Authorize]
+    public async Task<IActionResult> History()
+    {
+        
+        return View();
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Comment(CommentViewModel model)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var comment = new Comment
+        {
+            Date = DateTime.UtcNow,
+            ProductId = model.ProductId,
+            Score = model.Rating,
+            UserId = userId,
+            Text = model.Text,
+        };
+        dbContext.Add(comment);
+        await dbContext.SaveChangesAsync();
+        return RedirectToRoute("Product", new { id = model.ProductId, name = model.ProductName!.ToSafeUrlString() });
     }
 }
 

@@ -15,6 +15,7 @@ namespace MVCECommerce.Domain
         public required DateTime Date { get; set; }
         public required Genders Gender { get; set; }
 
+        public bool IsEnabled { get; set; }=true;
 
         public ICollection<Product> CreatedProducts { get; set; } = new List<Product>();
         public ICollection<Brand> CreatedBrands { get; set; } = new List<Brand>();

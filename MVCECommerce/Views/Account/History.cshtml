@@ -1,17 +1,18 @@
-﻿@model User
+﻿
 @inject MVCECommerceDbContext dbContext
 @{
     Layout = "_ProfileLayout";
 
     ViewData["Title"] = "Profile";
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-    var activeOrders = dbContext
+    var shippedOrders = dbContext
         .Orders
         .Include(p => p.Items).ThenInclude(p => p.Product)
         .AsNoTracking()
         .AsSingleQuery()
-        .Where(p => p.UserId == userId && (p.Status == OrderStatus.New || p.Status == OrderStatus.InProgress))
+        .Where(p => p.UserId == userId && (p.Status == OrderStatus.Cancelled || p.Status == OrderStatus.Shipped))
         .ToList();
 }
-<h4>Active Orders</h4>
-<partial name="_OrderListPartial" model="activeOrders" />
+<h4>Order History</h4>
+
+<partial name="_OrderListPartial" model="shippedOrders" />

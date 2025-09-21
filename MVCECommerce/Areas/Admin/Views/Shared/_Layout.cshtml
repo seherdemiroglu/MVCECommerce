@@ -76,6 +76,26 @@
                     <span>Sliders</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrders"
+                   aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-bars"></i>
+                    <span>Sipariş</span>
+                </a>
+                <div id="collapseOrders" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" asp-controller="Orders" asp-action="Index">Yeni Siparişler</a>
+                        <a class="collapse-item" asp-controller="Orders" asp-action="InProgress">Aktif Siparişler</a>
+                        <a class="collapse-item" asp-controller="Orders" asp-action="Shipped">Tamamlanan Siparişler</a>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Members" asp-action="Index">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Üyeler</span>
+                </a>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -83,6 +103,7 @@
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
+
 
         </ul>
         <!-- End of Sidebar -->

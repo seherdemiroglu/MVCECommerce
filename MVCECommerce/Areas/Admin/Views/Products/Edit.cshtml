@@ -1,6 +1,6 @@
 ﻿@model Product
 
-@inject MVCECommerce.MVCECommerceDbContext dbContext
+@inject MVCECommerceDbContext dbContext
 @{
     ViewData["Title"] = "Ürün Düzenle";
     var categories = dbContext.Categories.OrderBy(p => p.NameTr).ToList();
@@ -8,7 +8,37 @@
     var categoySelectList = new SelectList(categories.Select(p => new { p.Id, p.NameTr }), "Id", "NameTr");
     var brands = new SelectList(dbContext.Brands.OrderBy(p => p.Name).ToList(), "Id", "Name");
     var catalogs = new SelectList(dbContext.Catalogs.OrderBy(p => p.NameTr).ToList(), "Id", "NameTr");
+    var orders = dbContext.OrderItems.Count(p => p.Order.Status != OrderStatus.Cancelled && p.ProductId == Model.Id);
+    var monthNames = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames.Where(p => !string.IsNullOrEmpty(p));
+    var annualSales = dbContext
+    .Orders
+    .Where(p => p.Status != OrderStatus.Cancelled && p.Items.Any(q => q.ProductId == Model.Id))
+    .Include(p => p.Items)
+    .GroupBy(p => p.Date.Month)
+    .Select(p => new { p.Key, Count = p.Count() })
+    .ToList();
+    var monthlySales = Enumerable.Range(1, 12).Select(p => annualSales.SingleOrDefault(q => q.Key == p)?.Count ?? 0);
 }
+
+<div class="row">
+    <div class="col-12 col-md-8">
+        <div style="height: 100%">
+            <canvas id="salesMonthly"></canvas>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body d-flex gap-3">
+                <i class="bi bi-bag-heart display-1"></i>
+                <div class="flex-fill d-flex flex-column text-right">
+                    <div class="small">toplam satış</div>
+                    <div class="display-4">@orders.ToString("n0")</div>
+                    <div class="small">adet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Image" />
@@ -121,8 +151,31 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+
+        var salesMonthlyCtx = document.getElementById("salesMonthly");
+        new Chart(salesMonthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", monthNames.Select(p=> $"'{p}'")))],
+                options: {
+                    maintainAspectRatio: false,
+                },
+            datasets: [
+                {
+                    label: 'Toplam Satış',
+                    data: [@string.Join(",", monthlySales)],
+                    borderColor: 'red',
+                    backgroundColor: 'rgba(255,0,0,.6)',
+                    borderWidth: 2,
+                    borderRadius: 16,
+                },
+            ],
+        }
+    });
+
         $(() => {
             $('textarea').summernote({
                 height: 300,

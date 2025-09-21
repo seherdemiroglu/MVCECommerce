@@ -1,6 +1,193 @@
-﻿
+﻿@inject MVCECommerceDbContext dbContext
+@inject Microsoft.AspNetCore.Identity.UserManager<User> userManager
 @{
     ViewData["Title"] = "Dashboard";
+
+    var lastOrders = dbContext.Orders.Include(p => p.User).Include(p => p.Items).Where(p => p.Status == OrderStatus.New).OrderBy(p => p.Date).Take(10).ToList();
+    var monthNames = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedMonthNames.Where(p => !string.IsNullOrEmpty(p));
+    var annualSales = dbContext
+        .Orders
+        .Where(p => p.Status != OrderStatus.Cancelled)
+        .Include(p => p.Items)
+        .GroupBy(p => p.Date.Month)
+        .Select(p => new { p.Key, Total = p.Sum(q => q.Items.Sum(r => r.Quantity * r.Price)) })
+        .ToList();
+    var monthlySales = Enumerable.Range(1, 12).Select(p => annualSales.SingleOrDefault(q => q.Key == p)?.Total ?? 0);
+
+    var members = userManager.Users.Count(p => p.UserRoles.Any(q => q.Role.Name == "Members"));
+    var products = dbContext.Products.Count(p => p.IsEnabled);
+    var sales = dbContext.Orders.Where(p => p.Status != OrderStatus.Cancelled).Include(p => p.Items).Sum(p => p.Items.Sum(q => q.Quantity * q.Price));
+    var orders = dbContext.Orders.Count(p => p.Status != OrderStatus.Cancelled);
+    var topProducts = dbContext
+        .OrderItems
+        .Where(p => p.Order.Status != OrderStatus.Cancelled)
+        .GroupBy(p => p.Product).Select(p => new { p.Key.Id, p.Key.NameTr, Count = p.Count() })
+        .OrderByDescending(p => p.Count)
+        .Take(10);
 }
 
-<h4>hoşgeldiniz</h4>
+<h4>Hoşgeldiniz!!</h4>
+
+<div class="row row-cols-1 row-cols-md-4 mb-3">
+    <div class="col">
+        <div class="card bg-primary text-white">
+            <div class="card-body d-flex gap-3">
+                <i class="bi bi-people display-1"></i>
+                <div class="flex-fill d-flex flex-column text-right">
+                    <div class="small">üyeler</div>
+                    <div class="display-4">@members.ToString("n0")</div>
+                    <div class="small">adet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card bg-info text-white">
+            <div class="card-body d-flex gap-3">
+                <i class="bi bi-box display-1"></i>
+                <div class="flex-fill d-flex flex-column text-right">
+                    <div class="small">ürünler</div>
+                    <div class="display-4">@products.ToString("n0")</div>
+                    <div class="small">adet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card bg-success text-white">
+            <div class="card-body d-flex gap-3">
+                <i class="bi bi-currency-dollar display-1"></i>
+                <div class="flex-fill d-flex flex-column text-right">
+                    <div class="small">toplam satış</div>
+                    <div class="h3">@sales.ToString("n0")</div>
+                    <div class="small">₺</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card bg-warning text-white">
+            <div class="card-body d-flex gap-3">
+                <i class="bi bi-bag-heart display-1"></i>
+                <div class="flex-fill d-flex flex-column text-right">
+                    <div class="small">toplam sipariş</div>
+                    <div class="display-4">@orders.ToString("n0")</div>
+                    <div class="small">adet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12 col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>Son Siparişler</h5>
+            </div>
+            <table class="table table-borderless table-striped">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Kullanıcı Adı</th>
+                        <th>Kullanıcı E-Posta</th>
+                        <th>Tutar</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in lastOrders)
+                    {
+                        <tr>
+                            <td>@order.Date.ToShortDateString()</td>
+                            <td>@order.User!.GivenName</td>
+                            <td>
+                                <a href="mailto:@order.User.Email">@order.User.Email</a>
+                            </td>
+                            <td class="text-right text-monospace">@order.GrandTotal.ToString("n2")</td>
+                            <td>
+                                <a asp-controller="Orders" asp-action="Detail" asp-route-id="@order.Id" class="btn btn-primary">
+                                    <i class="bi bi-search"></i>
+                                    İncele
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Yıllık Satışlar</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="annualSales"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>En Çok Satanlar</h5>
+            </div>
+            <table class="table table-borderless table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Ürün Adı</th>
+                        <th>Adet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in topProducts)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@Url.Action("Product", "Images", new { area = "", id = product.Id })" alt="@product.NameTr" height="80" />
+                            </td>
+                            <td class="">
+                                <a asp-action="Edit" asp-controller="Products" asp-route-id="@product.Id">
+                                    @product.NameTr
+                                </a>
+                            </td>
+                            <td>
+                                @product.Count.ToString("n0")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    var annualSalesCtx = document.getElementById("annualSales");
+        new Chart(annualSalesCtx, {
+            type: 'bar',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", monthNames.Select(p=> $"'{p}'")))],
+                datasets: [
+                    {
+                        label: 'Toplam Satış',
+                        data: [@string.Join(",", monthlySales)],
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255,0,0,.6)',
+                        borderWidth: 2,
+                        borderRadius: 16,
+                    },
+                ],
+            }
+        });
+    </script>
+}

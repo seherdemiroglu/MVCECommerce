@@ -1,0 +1,43 @@
+﻿@model IEnumerable<User>
+@{
+    ViewData["Title"] = "Üyeler";
+
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ad/Soyad</th>
+            <th>E-Posta</th>
+            <th>Yetki</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    @user.GivenName
+                </td>
+                <td>
+                    @user.UserName
+                </td>
+                <td>
+                    @string.Join(", ", user.UserRoles.Select(p => p.Role.DisplayName))
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary" asp-action="SetRoles" asp-route-id="@user.Id">Yetkiler</a>
+                    @if (user.IsEnabled)
+                    {
+                        <a class="btn btn-danger" asp-action="BanUser" asp-route-id="@user.Id">Yasakla</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-success" asp-action="UnbanUser" asp-route-id="@user.Id">Yasak Kaldır</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
