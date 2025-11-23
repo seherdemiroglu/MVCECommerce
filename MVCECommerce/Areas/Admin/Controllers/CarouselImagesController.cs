@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVCECommerce.Areas.Admin.Models;
-using MVCECommerce.Domain;
+using MVCECommerceData;
 
 
 namespace MVCECommerce.Areas.Admin.Controllers

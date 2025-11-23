@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MVCECommerce.Domain;
+using MVCECommerceData;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVCECommerce.Models

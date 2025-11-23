@@ -5,6 +5,12 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCECommerce", "MVCECommerce\MVCECommerce.csproj", "{3304CA47-9E5B-9A5D-2DDB-0FC47E328D31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCECommerceData", "MVCECommerceData\MVCECommerceData.csproj", "{3FFE3EE1-E6D3-4BB3-BF72-B57F08F5665E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCECommerceMigrationPostgreSql", "MVCECommerceMigrationPostgreSql\MVCECommerceMigrationPostgreSql.csproj", "{A39F679C-7DE3-452E-BA2E-655DF2D7BEA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCECommerceWebApi", "MVCECommerceWebApi\MVCECommerceWebApi.csproj", "{4BCC5787-E6A9-4D02-8121-19FFFDE53350}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{3304CA47-9E5B-9A5D-2DDB-0FC47E328D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3304CA47-9E5B-9A5D-2DDB-0FC47E328D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3304CA47-9E5B-9A5D-2DDB-0FC47E328D31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FFE3EE1-E6D3-4BB3-BF72-B57F08F5665E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FFE3EE1-E6D3-4BB3-BF72-B57F08F5665E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FFE3EE1-E6D3-4BB3-BF72-B57F08F5665E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FFE3EE1-E6D3-4BB3-BF72-B57F08F5665E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A39F679C-7DE3-452E-BA2E-655DF2D7BEA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A39F679C-7DE3-452E-BA2E-655DF2D7BEA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A39F679C-7DE3-452E-BA2E-655DF2D7BEA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A39F679C-7DE3-452E-BA2E-655DF2D7BEA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BCC5787-E6A9-4D02-8121-19FFFDE53350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BCC5787-E6A9-4D02-8121-19FFFDE53350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BCC5787-E6A9-4D02-8121-19FFFDE53350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BCC5787-E6A9-4D02-8121-19FFFDE53350}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

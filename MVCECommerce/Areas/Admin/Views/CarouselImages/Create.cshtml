@@ -1,6 +1,6 @@
 ﻿
 @model CarouselImageDto
-@inject MVCECommerce.MVCECommerceDbContext dbContext
+@inject MVCECommerceData.MVCECommerceDbContext dbContext
 @{
     ViewData["Title"] = "Slider Ekleme";
     var catalogs = new SelectList(dbContext.Catalogs.ToList(), "Id", "NameTr");

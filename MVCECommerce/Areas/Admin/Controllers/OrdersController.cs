@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MVCECommerce.Domain;
+using MVCECommerceData;
 using NETCore.MailKit.Core;
 
 namespace MVCECommerce.Areas.Admin.Controllers

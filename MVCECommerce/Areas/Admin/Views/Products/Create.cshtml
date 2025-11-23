@@ -1,6 +1,6 @@
 ﻿@model Product
 
-@inject MVCECommerce.MVCECommerceDbContext dbContext
+@inject MVCECommerceData.MVCECommerceDbContext dbContext
 @{
     ViewData["Title"] = "Ürün Ekle";
     var categories = dbContext.Categories.OrderBy(p => p.NameTr).ToList();

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MVCECommerce.Domain;
-using MVCECommerce.Migrations;
+using MVCECommerceData;
+
 
 namespace MVCECommerce.Areas.Admin.Controllers;
 

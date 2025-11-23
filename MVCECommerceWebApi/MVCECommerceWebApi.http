@@ -1,0 +1,6 @@
+@MVCECommerceWebApi_HostAddress = http://localhost:5231
+
+GET {{MVCECommerceWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

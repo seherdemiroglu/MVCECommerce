@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Domain\" />
     <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
@@ -34,6 +35,11 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
     <PackageReference Include="SixLabors.ImageSharp.Web" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MVCECommerceData\MVCECommerceData.csproj" />
+    <ProjectReference Include="..\MVCECommerceMigrationPostgreSql\MVCECommerceMigrationPostgreSql.csproj" />
   </ItemGroup>
 
 </Project>

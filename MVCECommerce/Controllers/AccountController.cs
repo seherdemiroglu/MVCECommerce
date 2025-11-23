@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MVCECommerce.Domain;
+using MVCECommerceData;
 using MVCECommerce.Models;
 using NETCore.MailKit.Core;
 using System.Security.Claims;

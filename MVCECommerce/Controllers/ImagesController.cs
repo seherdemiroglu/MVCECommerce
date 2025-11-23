@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using System.Threading.Tasks;
+using MVCECommerceData;
 
 namespace MVCECommerce.Areas.Admin.Controllers
 {

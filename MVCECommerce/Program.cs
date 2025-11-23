@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using MVCECommerce;
-using MVCECommerce.Domain;
+using MVCECommerceData;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using System.Data.Common;
@@ -19,7 +19,12 @@ builder
 
 builder.Services.AddDbContext<MVCECommerceDbContext>(config =>
 {
-    config.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //config.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+    config.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), p =>
+    {
+        p.MigrationsAssembly("MVCECommerceMigrationPostgreSql");
+    });
 });
 
 builder.Services.AddIdentity<User,Role>(config =>
@@ -112,7 +117,7 @@ using var roleManager=scope.ServiceProvider.GetRequiredService<RoleManager<Role>
 using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
 
-dbContext.Database.Migrate();
+//dbContext.Database.Migrate();
 
 new[]
 {
